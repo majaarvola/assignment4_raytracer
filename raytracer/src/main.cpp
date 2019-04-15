@@ -168,7 +168,7 @@ void display(Context &ctx)
 
     // Update view matrix
     glm::mat4 trackball = trackballGetRotationMatrix(ctx.trackball);
-    glm::vec3 eye = glm::mat3(trackball) * glm::vec3(0.0f, 0.0f, 2.0f);
+    glm::vec3 eye = glm::transpose(glm::mat3(trackball)) * glm::vec3(0.0f, 0.0f, 2.0f);
     ctx.rtx.view = glm::lookAt(eye, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     if (ctx.trackball.tracking) {
         rt::resetAccumulation(ctx.rtx);

@@ -8,6 +8,16 @@
 #include "utils2.h"  // Used for OBJ-mesh loading
 #include <stdlib.h>  // Needed for drand48()
 
+float frand(void) {
+    double random;
+    random = float(rand()) / float(RAND_MAX);
+
+    while (random == 1) {
+        random = float(rand()) / float(RAND_MAX);
+    }
+    return random;
+}
+
 namespace rt {
 
 // Store scene (world) in a global variable for convenience
@@ -94,12 +104,15 @@ void setupScene(RTContext &rtx, const char *filename)
         Sphere(glm::vec3(1.0f, 0.0f, 0.0f), 0.5f),
         Sphere(glm::vec3(-1.0f, 0.0f, 0.0f), 0.5f),
     };
+
+    //Boxes
     //g_scene.boxes = {
     //    Box(glm::vec3(0.0f, -0.25f, 0.0f), glm::vec3(0.25f)),
     //    Box(glm::vec3(1.0f, -0.25f, 0.0f), glm::vec3(0.25f)),
     //    Box(glm::vec3(-1.0f, -0.25f, 0.0f), glm::vec3(0.25f)),
     //};
 
+    //Bunny
     //OBJMesh mesh;
     //objMeshLoad(mesh, filename);
     //g_scene.mesh.clear();
@@ -127,10 +140,12 @@ void updateLine(RTContext &rtx, int y)
     glm::mat4 world_from_view = glm::inverse(rtx.view);
 
     // You can try to parallelise this loop by uncommenting this line:
-    //#pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for schedule(dynamic)
     for (int x = 0; x < nx; ++x) {
-        float u = (float(x) + 0.5f) / float(nx);
-        float v = (float(y) + 0.5f) / float(ny);
+        float u = float(x + frand()) / float(nx);
+        float v = float(y + frand()) / float(ny);
+        //float u = (float(x) + 0.5f) / float(nx);
+        //float v = (float(y) + 0.5f) / float(ny);
         Ray r(origin, lower_left_corner + u * horizontal + v * vertical);
         r.A = glm::vec3(world_from_view * glm::vec4(r.A, 1.0f));
         r.B = glm::vec3(world_from_view * glm::vec4(r.B, 0.0f));
